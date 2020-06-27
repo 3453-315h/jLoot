@@ -13,11 +13,13 @@ parser.add_argument('-t',action='store',dest='timeoutf',type=int, default=2, hel
 parser.add_argument('-l',action='store',dest='flimit',type=int, help="File Limit")
 parser.add_argument('-o',action='store',dest='outdir', help="Output Directory - Default 'loot/'")
 parser.add_argument('-y',action='store',dest='yaraRules', help="Custom Yara Rules")
+parser.add_argument('-i',action='store',dest='sessionid', help="JSESSIONID to use for cookie based auth")
 args = parser.parse_args()
 timeoutf = args.timeoutf
 startf = args.startf
 flimit = args.flimit
 jURL = args.jURL
+sessionid = args.sessionid 
 attachURL = jURL + "/secure/attachment/"
 if args.outdir:
     outdir = args.outdir + '/'
@@ -35,12 +37,16 @@ def yaraMatch(data):
   print(" | \u001b[41m"+data["rule"], end="\u001b[0m")
   return yara.CALLBACK_CONTINUE
 
+opener = urllib.request.build_opener()
+if sessionid != None:
+  opener.addheaders.append(("Cookie", "JSESSIONID={}".format(sessionid)))
+
 i = 0
 while i < flimit:
     fileNum = str(startf+i)
     try:
         url = attachURL+fileNum+'/'
-        response = urllib.request.urlopen(url,timeout=timeoutf)
+        response = opener.urlopen(url,timeout=timeoutf)
         fileName = response.headers.get_filename()
         data = response.read()
         if fileName != None:

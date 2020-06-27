@@ -26,6 +26,7 @@ The following command line options are supported:
  -l limit       The limit for file downloads
  -o out_dir     The output directory (default is loot/)
  -y yara_rules  Specify custom yara rules
+ -i session_id  The JSESSIONID to use for cookie based auth (default is to use no auth)
 ```
 
 ## Setup ##
